@@ -63,9 +63,6 @@ public class MainActivity extends Activity implements LocationListener {
     }
 
     private void gpsBtnAction() {
-        Location gpsLocation;
-        Location networkLocation;
-
         String[] PERMISSIONS;
         PERMISSIONS = new String[] {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE };
@@ -76,33 +73,39 @@ public class MainActivity extends Activity implements LocationListener {
             ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, 0);
         }
         else {
-            try {
-                mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(() -> {
+                Location gpsLocation;
+                Location networkLocation;
 
-                Criteria criteria = new Criteria();
-                String bestProvider = String.valueOf(mLocationManager.getBestProvider(criteria, true));
+                try {
+                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-                gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                networkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    Criteria criteria = new Criteria();
+                    String bestProvider = String.valueOf(mLocationManager.getBestProvider(criteria, true));
 
-                if (gpsLocation != null) {
-                    callGridService(gpsLocation.getLatitude(), gpsLocation.getLongitude());
-                    Log.d("GPS LOCATION", "" + gpsLocation.getLatitude() + ", " + gpsLocation.getLongitude());
+                    gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    networkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                    if (gpsLocation != null) {
+                        callGridService(gpsLocation.getLatitude(), gpsLocation.getLongitude());
+                        Log.d("GPS LOCATION", "" + gpsLocation.getLatitude() + ", " + gpsLocation.getLongitude());
+                    }
+                    else if (networkLocation != null) {
+                        callGridService(networkLocation.getLatitude(), networkLocation.getLongitude());
+                        Log.d("NETWORK LOCATION", "" + networkLocation.getLatitude() + ", " + networkLocation.getLongitude());
+                    }
+                    else {
+                        mLocationManager.requestLocationUpdates(bestProvider, 1000, 0, MainActivity.this);
+                        callGridService(mCoordinates.first, mCoordinates.second);
+                    }
                 }
-                else if (networkLocation != null) {
-                    callGridService(networkLocation.getLatitude(), networkLocation.getLongitude());
-                    Log.d("NETWORK LOCATION", "" + networkLocation.getLatitude() + ", " + networkLocation.getLongitude());
+                catch(Exception e) {
+                    e.printStackTrace();
+                    Snackbar.make(findViewById(android.R.id.content), R.string.error_gps, Snackbar.LENGTH_SHORT)
+                            .setAction(R.string.retry, view -> gpsBtnAction()).show();
                 }
-                else {
-                    mLocationManager.requestLocationUpdates(bestProvider, 1000, 0, MainActivity.this);
-                    callGridService(mCoordinates.first, mCoordinates.second);
-                }
-            }
-            catch(Exception e) {
-                e.printStackTrace();
-                Snackbar.make(findViewById(android.R.id.content), R.string.error_gps, Snackbar.LENGTH_SHORT)
-                        .setAction(R.string.retry, view -> gpsBtnAction()).show();
-            }
+            });
         }
     }
 
