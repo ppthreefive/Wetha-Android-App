@@ -100,6 +100,8 @@ public class MainActivity extends Activity implements LocationListener {
             }
             catch(Exception e) {
                 e.printStackTrace();
+                Snackbar.make(findViewById(android.R.id.content), R.string.error_gps, Snackbar.LENGTH_SHORT)
+                        .setAction(R.string.retry, view -> gpsBtnAction()).show();
             }
         }
     }

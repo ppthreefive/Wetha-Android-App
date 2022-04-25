@@ -12,5 +12,6 @@
     <string name="city_placeholder">City</string>
     <string name="state_placeholder">State</string>
     <string name="error_network">There was a problem with your internet connection. Please try again.</string>
+    <string name="error_gps">There was a problem gathering GPS data. Please try again.</string>
     <string name="retry">RETRY</string>
 </resources>
