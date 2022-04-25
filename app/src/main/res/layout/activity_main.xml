@@ -17,14 +17,36 @@
             android:layout_centerVertical="true"
             android:layout_centerInParent="true">
 
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/weatherlogo"
+                />
+
+            <TextView
+                android:id="@+id/welcome"
+                android:layout_below="@id/logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome"
+                android:textSize="14sp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="50dp"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/mystic"/>
+
+
             <TextView
                 android:id="@+id/instruction"
+                android:layout_below="@id/welcome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/instruction"
-                android:textSize="18sp"
-                android:layout_centerHorizontal="true"
+                android:textSize="16sp"
                 android:layout_marginBottom="15dp"
+                android:layout_centerHorizontal="true"
                 android:textColor="@color/mystic"/>
 
             <RelativeLayout
@@ -41,6 +63,7 @@
                     android:text="@string/enter_City"
                     android:textSize="24sp"
                     android:layout_marginEnd="25dp"
+                    android:layout_marginTop="7dp"
                     android:textColor="@color/mystic"/>
 
                 <EditText
@@ -48,12 +71,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/txtEnterCity"
-                    android:ems="10"
+                    android:ems="11"
                     android:hint="@string/city_placeholder"
                     android:inputType="text"
                     android:minHeight="48dp"
                     android:autofillHints="city"
-                    android:textColor="@color/mystic"/>
+                    android:textColor="@color/mystic"
+                    android:backgroundTint="@color/mystic"
+                    android:textColorHint="@color/mystic"/>
 
                 <TextView
                     android:id="@+id/txtEnterState"
@@ -61,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/enter_State"
                     android:layout_below="@+id/editCity"
+                    android:layout_marginTop="7dp"
                     android:textSize="24sp"
                     android:textColor="@color/mystic"/>
 
@@ -71,12 +97,14 @@
                     android:layout_below="@+id/editCity"
                     android:layout_alignStart="@+id/editCity"
                     android:layout_toEndOf="@+id/txtEnterState"
-                    android:ems="10"
+                    android:ems="11"
                     android:hint="@string/state_placeholder"
                     android:inputType="text"
                     android:minHeight="48dp"
                     android:autofillHints="state"
-                    android:textColor="@color/mystic"/>
+                    android:textColor="@color/mystic"
+                    android:backgroundTint="@color/mystic"
+                    android:textColorHint="@color/mystic"/>
 
                 <Button
                     android:id="@+id/btnEnter"

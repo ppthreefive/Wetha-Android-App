@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="welcome">Welcome to the Wetha!</string>
+    <string name="app_name">Wetha</string>
     <string name="enter_City">City:</string>
     <string name="enter_State">State:</string>
     <string name="instruction">Please enter your city and state below</string>
