@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="enter_City">City:</string>
+    <string name="enter_State">State:</string>
+    <string name="instruction">Please enter your city and state below</string>
+    <string name="btn_Enter">Enter</string>
+    <string name="btn_UseGps">Use location services</string>
+    <string name="alternate">OR</string>
+    <string name="day_temp">Day: </string>
+    <string name="night_temp">Night: </string>
+    <string name="detailed_forecast">Detailed Forecast: </string>
+    <string name="city_placeholder">City</string>
+    <string name="state_placeholder">State</string>
+</resources>
