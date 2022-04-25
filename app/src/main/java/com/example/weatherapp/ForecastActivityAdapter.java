@@ -1,6 +1,5 @@
 package com.example.weatherapp;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +15,15 @@ import java.util.List;
 
 public class ForecastActivityAdapter extends RecyclerView.Adapter<ForecastActivityAdapter.ForecastViewHolder> implements View.OnClickListener {
 
-    private List<FullDayCard> mFullDays;
+    private final List<FullDayCard> mFullDays;
     View.OnClickListener onClickListener;
 
     public ForecastActivityAdapter(List<FullDayCard> fullDays) {
         this.mFullDays = fullDays;
     }
 
-    public boolean onClickListener(View.OnClickListener onClickListener) {
+    public void onClickListener(View.OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
-        return true;
     }
 
     @Override

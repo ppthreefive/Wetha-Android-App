@@ -14,7 +14,6 @@ import com.example.weatherapp.Models.*;
 import com.example.weatherapp.Network.*;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
-import java.io.*;
 import java.util.*;
 import retrofit2.*;
 
