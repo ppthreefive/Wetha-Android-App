@@ -1,97 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_centerInParent="true">
-
-        <TextView
-            android:id="@+id/instruction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/instruction"
-            android:textSize="18sp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="15dp"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
         <RelativeLayout
-            android:id="@+id/inputContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/instruction">
+            android:layout_centerVertical="true"
+            android:layout_centerInParent="true">
 
             <TextView
-                android:id="@+id/txtEnterCity"
+                android:id="@+id/instruction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/enter_City"
-                android:textSize="24sp"
-                android:layout_marginEnd="25dp"/>
-
-            <EditText
-                android:id="@+id/editCity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/txtEnterCity"
-                android:ems="10"
-                android:hint="@string/city_placeholder"
-                android:inputType="text"
-                android:minHeight="48dp" />
-
-            <TextView
-                android:id="@+id/txtEnterState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/enter_State"
-                android:layout_below="@+id/editCity"
-                android:textSize="24sp" />
-
-            <EditText
-                android:id="@+id/editState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/editCity"
-                android:layout_alignStart="@+id/editCity"
-                android:layout_toEndOf="@+id/txtEnterState"
-                android:ems="10"
-                android:hint="@string/state_placeholder"
-                android:inputType="text"
-                android:minHeight="48dp" />
-
-            <Button
-                android:id="@+id/btnEnter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/editState"
+                android:text="@string/instruction"
+                android:textSize="18sp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:text="@string/btn_Enter" />
-
-            <TextView
-                android:id="@+id/txtAlternate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="@string/alternate"
-                android:layout_below="@+id/btnEnter"
-                android:textSize="24sp"
-                android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"/>
 
-            <Button
-                android:id="@+id/btnUseGps"
+            <RelativeLayout
+                android:id="@+id/inputContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/txtAlternate"
                 android:layout_centerHorizontal="true"
-                android:text="@string/btn_UseGps" />
+                android:layout_below="@id/instruction">
+
+                <TextView
+                    android:id="@+id/txtEnterCity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enter_City"
+                    android:textSize="24sp"
+                    android:layout_marginEnd="25dp"/>
+
+                <EditText
+                    android:id="@+id/editCity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/txtEnterCity"
+                    android:ems="10"
+                    android:hint="@string/city_placeholder"
+                    android:inputType="text"
+                    android:minHeight="48dp" />
+
+                <TextView
+                    android:id="@+id/txtEnterState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enter_State"
+                    android:layout_below="@+id/editCity"
+                    android:textSize="24sp" />
+
+                <EditText
+                    android:id="@+id/editState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/editCity"
+                    android:layout_alignStart="@+id/editCity"
+                    android:layout_toEndOf="@+id/txtEnterState"
+                    android:ems="10"
+                    android:hint="@string/state_placeholder"
+                    android:inputType="text"
+                    android:minHeight="48dp" />
+
+                <Button
+                    android:id="@+id/btnEnter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/editState"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/btn_Enter" />
+
+                <TextView
+                    android:id="@+id/txtAlternate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/alternate"
+                    android:layout_below="@+id/btnEnter"
+                    android:textSize="24sp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"/>
+
+                <Button
+                    android:id="@+id/btnUseGps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtAlternate"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/btn_UseGps" />
+            </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
+</ScrollView>

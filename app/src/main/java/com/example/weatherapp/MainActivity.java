@@ -4,31 +4,19 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Criteria;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.util.Log;
-import android.util.Pair;
-import android.widget.Button;
-import android.widget.EditText;
-import com.example.weatherapp.Models.Forecast;
-import com.example.weatherapp.Models.Grid;
-import com.example.weatherapp.Network.GetWeatherService;
-import com.example.weatherapp.Network.RetrofitClientInstance;
+import android.location.*;
+import android.os.*;
+import android.util.*;
+import android.widget.*;
+import com.example.weatherapp.Models.*;
+import com.example.weatherapp.Network.*;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.io.*;
+import java.util.*;
+import retrofit2.*;
 
 public class MainActivity extends Activity implements LocationListener {
 
@@ -46,60 +34,74 @@ public class MainActivity extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editCity = (EditText) findViewById(R.id.editCity);
-        editState = (EditText) findViewById(R.id.editState);
+        editCity = findViewById(R.id.editCity);
+        editState = findViewById(R.id.editState);
 
-        mButtonEnter = (Button) findViewById(R.id.btnEnter);
-        mButtonEnter.setOnClickListener(view -> {
-            mCoordinates = getLatLong(editCity.getText().toString() + ", " + editState.getText().toString());
+        mButtonEnter = findViewById(R.id.btnEnter);
+        mButtonEnter.setOnClickListener(view -> manuallyEnteredAction());
 
-            callGridService(mCoordinates.first, mCoordinates.second);
-        });
+        mButtonUseGps = findViewById(R.id.btnUseGps);
+        mButtonUseGps.setOnClickListener(view -> gpsBtnAction());
+    }
 
-        mButtonUseGps = (Button) findViewById(R.id.btnUseGps);
-        mButtonUseGps.setOnClickListener(view -> {
-            Location gpsLocation;
-            Location networkLocation;
-
-            String[] PERMISSIONS;
-            PERMISSIONS = new String[] {Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE };
-
-            if(ActivityCompat.checkSelfPermission(getApplicationContext(), PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(getApplicationContext(), PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(getApplicationContext(), PERMISSIONS[2]) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, 0);
+    private void manuallyEnteredAction() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            try {
+                mCoordinates = getLatLong(editCity.getText().toString() + ", " + editState.getText().toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+                Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT)
+                        .setAction(R.string.retry, view -> manuallyEnteredAction()).show();
             }
-            else {
-                try {
-                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-                    Criteria criteria = new Criteria();
-                    String bestProvider = String.valueOf(mLocationManager.getBestProvider(criteria, true));
-
-                    gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    networkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-                    if (gpsLocation != null) {
-                        callGridService(gpsLocation.getLatitude(), gpsLocation.getLongitude());
-                        Log.d("GPS LOCATION", "" + gpsLocation.getLatitude() + ", " + gpsLocation.getLongitude());
-                    }
-                    else if (networkLocation != null) {
-                        callGridService(networkLocation.getLatitude(), networkLocation.getLongitude());
-                        Log.d("NETWORK LOCATION", "" + networkLocation.getLatitude() + ", " + networkLocation.getLongitude());
-                    }
-                    else {
-                        mLocationManager.requestLocationUpdates(bestProvider, 1000, 0, MainActivity.this);
-                        callGridService(mCoordinates.first, mCoordinates.second);
-                    }
+            runOnUiThread(() -> {
+                if(mCoordinates != null) {
+                    callGridService(mCoordinates.first, mCoordinates.second);
                 }
-                catch(Exception e) {
-                    e.printStackTrace();
+            });
+        });
+    }
+
+    private void gpsBtnAction() {
+        Location gpsLocation;
+        Location networkLocation;
+
+        String[] PERMISSIONS;
+        PERMISSIONS = new String[] {Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE };
+
+        if(ActivityCompat.checkSelfPermission(getApplicationContext(), PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getApplicationContext(), PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getApplicationContext(), PERMISSIONS[2]) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, 0);
+        }
+        else {
+            try {
+                mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+                Criteria criteria = new Criteria();
+                String bestProvider = String.valueOf(mLocationManager.getBestProvider(criteria, true));
+
+                gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                networkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                if (gpsLocation != null) {
+                    callGridService(gpsLocation.getLatitude(), gpsLocation.getLongitude());
+                    Log.d("GPS LOCATION", "" + gpsLocation.getLatitude() + ", " + gpsLocation.getLongitude());
+                }
+                else if (networkLocation != null) {
+                    callGridService(networkLocation.getLatitude(), networkLocation.getLongitude());
+                    Log.d("NETWORK LOCATION", "" + networkLocation.getLatitude() + ", " + networkLocation.getLongitude());
+                }
+                else {
+                    mLocationManager.requestLocationUpdates(bestProvider, 1000, 0, MainActivity.this);
+                    callGridService(mCoordinates.first, mCoordinates.second);
                 }
             }
-        });
-
-        //callGridService(33.366451, -111.963178);
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void startForecastActivity() {
@@ -110,20 +112,15 @@ public class MainActivity extends Activity implements LocationListener {
         startActivity(intent);
     }
 
-    private Pair<Double, Double> getLatLong(String location) {
+    private Pair<Double, Double> getLatLong(String location) throws IOException {
         Pair<Double, Double> latLong;
 
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         List<Address> addresses;
 
-        try {
-            addresses = geocoder.getFromLocationName(location, 1);
-            latLong = new Pair<>(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
-            Log.d("Coordinates", latLong.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-            latLong = null;
-        }
+        addresses = geocoder.getFromLocationName(location, 1);
+        latLong = new Pair<>(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
+        Log.d("Coordinates", latLong.toString());
 
         return latLong;
     }
@@ -133,7 +130,7 @@ public class MainActivity extends Activity implements LocationListener {
         Call<Grid> call = service.getGridDetails(latitude, longitude);
         call.enqueue(new Callback<Grid>() {
             @Override
-            public void onResponse(Call<Grid> call, Response<Grid> response) {
+            public void onResponse(@NonNull Call<Grid> call, @NonNull Response<Grid> response) {
                 if(!response.isSuccessful()) {
                     Log.d("Code", "" + response.code());
                 }
@@ -141,13 +138,13 @@ public class MainActivity extends Activity implements LocationListener {
                     Log.d("Response", "SUCCESS");
                     mGrid = response.body();
 
-                    Log.d("Response", response.body().toString());
+                    Log.d("Response", response.body() != null ? response.body().toString() : "");
                     callForecastService();
                 }
             }
 
             @Override
-            public void onFailure(Call<Grid> call, Throwable t) {
+            public void onFailure(@NonNull Call<Grid> call, @NonNull Throwable t) {
                 Log.e("Failure", t.getMessage());
             }
         });
@@ -158,7 +155,7 @@ public class MainActivity extends Activity implements LocationListener {
         Call<Forecast> call = service.getForecast(mGrid.getProperties().getGridId(), mGrid.getProperties().getGridX(), mGrid.getProperties().getGridY());
         call.enqueue(new Callback<Forecast>() {
             @Override
-            public void onResponse(Call<Forecast> call, Response<Forecast> response) {
+            public void onResponse(@NonNull Call<Forecast> call, @NonNull Response<Forecast> response) {
                 if(!response.isSuccessful()) {
                     Log.d("Code", "" + response.code());
                 }
@@ -166,13 +163,13 @@ public class MainActivity extends Activity implements LocationListener {
                     Log.d("Response", "SUCCESS");
                     mForecast = response.body();
 
-                    Log.d("Response", response.body().getProperties().toString());
+                    Log.d("Response", response.body() != null ? response.body().getProperties().toString() : "");
                     startForecastActivity();
                 }
             }
 
             @Override
-            public void onFailure(Call<Forecast> call, Throwable t) {
+            public void onFailure(@NonNull Call<Forecast> call, @NonNull Throwable t) {
                 Log.e("Failure", t.getMessage());
             }
         });

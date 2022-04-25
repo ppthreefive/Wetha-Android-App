@@ -11,4 +11,6 @@
     <string name="detailed_forecast">Detailed Forecast: </string>
     <string name="city_placeholder">City</string>
     <string name="state_placeholder">State</string>
+    <string name="error_network">There was a problem with your internet connection. Please try again.</string>
+    <string name="retry">RETRY</string>
 </resources>
