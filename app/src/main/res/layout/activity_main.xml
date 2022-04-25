@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:background="@color/pickled_bluewood"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -24,7 +24,8 @@
                 android:text="@string/instruction"
                 android:textSize="18sp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="15dp"/>
+                android:layout_marginBottom="15dp"
+                android:textColor="@color/mystic"/>
 
             <RelativeLayout
                 android:id="@+id/inputContainer"
@@ -39,7 +40,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/enter_City"
                     android:textSize="24sp"
-                    android:layout_marginEnd="25dp"/>
+                    android:layout_marginEnd="25dp"
+                    android:textColor="@color/mystic"/>
 
                 <EditText
                     android:id="@+id/editCity"
@@ -49,7 +51,9 @@
                     android:ems="10"
                     android:hint="@string/city_placeholder"
                     android:inputType="text"
-                    android:minHeight="48dp" />
+                    android:minHeight="48dp"
+                    android:autofillHints="city"
+                    android:textColor="@color/mystic"/>
 
                 <TextView
                     android:id="@+id/txtEnterState"
@@ -57,7 +61,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/enter_State"
                     android:layout_below="@+id/editCity"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+                    android:textColor="@color/mystic"/>
 
                 <EditText
                     android:id="@+id/editState"
@@ -69,7 +74,9 @@
                     android:ems="10"
                     android:hint="@string/state_placeholder"
                     android:inputType="text"
-                    android:minHeight="48dp" />
+                    android:minHeight="48dp"
+                    android:autofillHints="state"
+                    android:textColor="@color/mystic"/>
 
                 <Button
                     android:id="@+id/btnEnter"
@@ -78,7 +85,9 @@
                     android:layout_below="@+id/editState"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
-                    android:text="@string/btn_Enter" />
+                    android:text="@string/btn_Enter"
+                    android:textColor="@color/pickled_bluewood"
+                    android:backgroundTint="@color/mystic"/>
 
                 <TextView
                     android:id="@+id/txtAlternate"
@@ -89,7 +98,8 @@
                     android:layout_below="@+id/btnEnter"
                     android:textSize="24sp"
                     android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"/>
+                    android:layout_marginBottom="15dp"
+                    android:textColor="@color/mystic"/>
 
                 <Button
                     android:id="@+id/btnUseGps"
@@ -97,7 +107,9 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txtAlternate"
                     android:layout_centerHorizontal="true"
-                    android:text="@string/btn_UseGps" />
+                    android:text="@string/btn_UseGps"
+                    android:textColor="@color/pickled_bluewood"
+                    android:backgroundTint="@color/mystic"/>
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>

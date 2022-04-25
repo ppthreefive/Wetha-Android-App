@@ -45,21 +45,31 @@ public class MainActivity extends Activity implements LocationListener {
     }
 
     private void manuallyEnteredAction() {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            try {
-                mCoordinates = getLatLong(editCity.getText().toString() + ", " + editState.getText().toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-                Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT)
-                        .setAction(R.string.retry, view -> manuallyEnteredAction()).show();
-            }
-            runOnUiThread(() -> {
-                if(mCoordinates != null) {
-                    callGridService(mCoordinates.first, mCoordinates.second);
+        if(!editCity.getText().toString().isEmpty() && !editState.getText().toString().isEmpty()) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(() -> {
+                try {
+                    mCoordinates = getLatLong(editCity.getText().toString() + ", " + editState.getText().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT)
+                            .setAction(R.string.retry, view -> manuallyEnteredAction()).show();
                 }
+                runOnUiThread(() -> {
+                    if(mCoordinates != null) {
+                        callGridService(mCoordinates.first, mCoordinates.second);
+                    }
+                });
             });
-        });
+        }
+        else {
+            if(editCity.getText().toString().isEmpty()) {
+                editCity.setError(getApplicationContext().getResources().getString(R.string.error_empty_city));
+            }
+            if(editState.getText().toString().isEmpty()) {
+                editState.setError(getApplicationContext().getResources().getString(R.string.error_empty_state));
+            }
+        }
     }
 
     private void gpsBtnAction() {
@@ -117,7 +127,7 @@ public class MainActivity extends Activity implements LocationListener {
         startActivity(intent);
     }
 
-    private Pair<Double, Double> getLatLong(String location) throws IOException {
+    private Pair<Double, Double> getLatLong(String location) throws Exception {
         Pair<Double, Double> latLong;
 
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());

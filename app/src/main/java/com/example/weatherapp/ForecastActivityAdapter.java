@@ -1,5 +1,6 @@
 package com.example.weatherapp;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,10 +46,16 @@ public class ForecastActivityAdapter extends RecyclerView.Adapter<ForecastActivi
     public void onBindViewHolder(@NonNull ForecastActivityAdapter.ForecastViewHolder holder, int position) {
         FullDayCard currentFullDay = mFullDays.get(position);
 
+        String dayTemp = "";
+        String nightTemp = String.format(holder.mNightTempText.getText().toString(), currentFullDay.getNightTemp(), currentFullDay.getTempUnit());
+        if(currentFullDay.getDayTemp() != null) {
+            dayTemp = String.format(holder.mDayTempText.getText().toString(), currentFullDay.getDayTemp(), currentFullDay.getTempUnit());
+        }
+
         Picasso.get().load(currentFullDay.getDayImageLocation()).into(holder.mDayImage);
         Picasso.get().load(currentFullDay.getNightImageLocation()).into(holder.mNightImage);
-        holder.mDayTempText.setText(holder.mDayTempText.getText() + " " + Integer.toString(currentFullDay.getDayTemp()) + currentFullDay.getTempUnit());
-        holder.mNightTempText.setText(holder.mNightTempText.getText() + " " + Integer.toString(currentFullDay.getNightTemp()) + currentFullDay.getTempUnit());
+        holder.mDayTempText.setText(dayTemp);
+        holder.mNightTempText.setText(nightTemp);
         holder.mDayForecastText.setText(currentFullDay.getDayShortForecast());
         holder.mNightForecastText.setText(currentFullDay.getNightShortForecast());
         holder.mName.setText(currentFullDay.getName());

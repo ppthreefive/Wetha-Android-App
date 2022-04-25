@@ -6,12 +6,16 @@
     <string name="btn_Enter">Enter</string>
     <string name="btn_UseGps">Use location services</string>
     <string name="alternate">OR</string>
-    <string name="day_temp">Day: </string>
-    <string name="night_temp">Night: </string>
+    <string name="day_temp">Day: %1$s°%2$s</string>
+    <string name="night_temp">Night: %1$s°%2$s</string>
     <string name="detailed_forecast">Detailed Forecast: </string>
     <string name="city_placeholder">City</string>
     <string name="state_placeholder">State</string>
-    <string name="error_network">There was a problem with your internet connection. Please try again.</string>
-    <string name="error_gps">There was a problem gathering GPS data. Please try again.</string>
+    <string name="error_network">There was a problem getting data. \nPlease try again.</string>
+    <string name="error_gps">There was a problem gathering GPS data. \nPlease try again.</string>
     <string name="retry">RETRY</string>
+    <string name="currently">Currently: %1$s°%2$s</string>
+    <string name="tonight">Tonight: %1$s°%2$s</string>
+    <string name="error_empty_city">You must enter a city.</string>
+    <string name="error_empty_state">You must enter a state.</string>
 </resources>

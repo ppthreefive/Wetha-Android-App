@@ -7,7 +7,8 @@
     android:id="@+id/forecastCard"
     app:cardMaxElevation="5dp"
     app:cardUseCompatPadding="true"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="10dp"
+    app:cardBackgroundColor="@color/mystic">
 
     <RelativeLayout
         android:id="@+id/iconTempContainer"
@@ -16,17 +17,26 @@
 
         <TextView
             android:id="@+id/dayName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="24sp"
             android:text="DayName"
-            android:padding="15dp"/>
+            android:padding="15dp"
+            android:textColor="@color/mystic"
+            android:background="@color/pickled_bluewood"/>
+
+        <View
+            android:id="@+id/titleSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/pickled_bluewood"
+            android:layout_below="@id/dayName"/>
 
         <RelativeLayout
             android:id="@+id/dayHalf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/dayName"
+            android:layout_below="@id/titleSeparator"
             android:layout_marginBottom="1dp">
 
             <ImageView
@@ -42,25 +52,36 @@
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="5dp"
                 android:layout_toEndOf="@+id/todayIcon"
-                android:text="@string/day_temp" />
+                android:text="@string/day_temp"
+                android:textColor="@color/pickled_bluewood"/>
 
             <TextView
                 android:id="@+id/dayForecast"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_toEndOf="@id/dayTemp"
                 android:layout_centerInParent="true"
                 android:text="Placeholder"
-                android:layout_marginRight="10dp"
-                android:textSize="12sp"/>
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:textSize="12sp"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/pickled_bluewood"/>
 
         </RelativeLayout>
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/pickled_bluewood"
+            android:layout_below="@id/dayHalf"/>
 
         <RelativeLayout
             android:id="@+id/nightHalf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/dayHalf">
+            android:layout_below="@id/separator">
 
             <ImageView
                 android:id="@+id/tonightIcon"
@@ -76,26 +97,23 @@
                 android:layout_marginLeft="5dp"
                 android:layout_centerInParent="true"
                 android:layout_toEndOf="@id/tonightIcon"
-                android:text="@string/night_temp" />
+                android:text="@string/night_temp"
+                android:textColor="@color/pickled_bluewood"/>
 
             <TextView
                 android:id="@+id/nightForecast"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_toEndOf="@id/nightTemp"
                 android:layout_centerInParent="true"
                 android:text="Placeholder"
-                android:layout_marginRight="10dp"
-                android:textSize="12sp"/>
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:textSize="12sp"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/pickled_bluewood"/>
 
         </RelativeLayout>
-
-        <View
-            android:id="@+id/seperator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/black"
-            android:layout_below="@id/dayHalf"/>
 
     </RelativeLayout>
 
