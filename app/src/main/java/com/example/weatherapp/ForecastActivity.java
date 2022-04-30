@@ -45,7 +45,7 @@ public class ForecastActivity extends Activity {
     }
 
     private void setUpCurrentDayViews() {
-        if(!mFullDays.get(0).getName().equals("Today")) {
+        if(!mFullDays.get(0).getName().equals("Today") && !mFullDays.get(0).getName().equals("This Afternoon")) {
             mCurrentTemp.setText(String.format(mCurrentTemp.getText().toString(), mFullDays.get(0).getNightTemp(), mFullDays.get(0).getTempUnit()));
             ((ViewGroup)mTonightTemp.getParent()).removeView(mTonightTemp);
             ((ViewGroup)mTonightImage.getParent()).removeView(mTonightImage);
@@ -84,7 +84,7 @@ public class ForecastActivity extends Activity {
             if(shortForecastDay.contains("Cloudy")) {
                 mCurrentImage.setImageResource(R.drawable.day_cloudy);
             }
-            else if(shortForecastDay.contains("Clear")) {
+            else if(shortForecastDay.contains("Clear") || shortForecastDay.contains("Sunny")) {
                 mCurrentImage.setImageResource(R.drawable.sunny);
             }
             else if(shortForecastDay.contains("Rain") || shortForecastNight.contains("Showers")) {
