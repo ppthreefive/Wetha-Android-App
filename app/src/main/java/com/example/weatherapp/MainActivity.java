@@ -173,6 +173,9 @@ public class MainActivity extends Activity implements LocationListener {
             public void onResponse(@NonNull Call<Forecast> call, @NonNull Response<Forecast> response) {
                 if(!response.isSuccessful()) {
                     Log.d("Code", "" + response.code());
+                    if(response.code() == 500) {
+                        Snackbar.make(findViewById(android.R.id.content), R.string.error_not_supported, Snackbar.LENGTH_SHORT).show();
+                    }
                 }
                 else {
                     Log.d("Response", "SUCCESS");
