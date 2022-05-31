@@ -1,94 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/pickled_bluewood"
+    android:background="@color/pickled_blue_wood"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_centerInParent="true">
+            android:layout_centerInParent="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/logo"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/weatherlogo"
-                />
+                android:src="@drawable/weatherlogo" />
 
             <TextView
                 android:id="@+id/welcome"
-                android:layout_below="@id/logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/welcome"
-                android:textSize="14sp"
+                android:layout_below="@id/logo"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="50dp"
                 android:layout_marginTop="15dp"
-                android:textColor="@color/mystic"/>
+                android:layout_marginBottom="50dp"
+                android:text="@string/welcome"
+                android:textColor="@color/mystic"
+                android:textSize="14sp" />
 
 
             <TextView
                 android:id="@+id/instruction"
-                android:layout_below="@id/welcome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/instruction"
-                android:textSize="16sp"
-                android:layout_marginBottom="15dp"
+                android:layout_below="@id/welcome"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/mystic"/>
+                android:layout_marginBottom="15dp"
+                android:text="@string/instruction"
+                android:textColor="@color/mystic"
+                android:textSize="16sp" />
 
             <RelativeLayout
                 android:id="@+id/inputContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@id/instruction">
+                android:layout_below="@id/instruction"
+                android:layout_centerHorizontal="true">
 
                 <TextView
                     android:id="@+id/txtEnterCity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/enter_City"
-                    android:textSize="24sp"
-                    android:layout_marginEnd="25dp"
                     android:layout_marginTop="7dp"
-                    android:textColor="@color/mystic"/>
+                    android:layout_marginEnd="25dp"
+                    android:text="@string/enter_City"
+                    android:textColor="@color/mystic"
+                    android:textSize="24sp" />
 
                 <EditText
                     android:id="@+id/editCity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/txtEnterCity"
+                    android:autofillHints="city"
+                    android:backgroundTint="@color/mystic"
                     android:ems="11"
                     android:hint="@string/city_placeholder"
                     android:inputType="text"
                     android:minHeight="48dp"
-                    android:autofillHints="city"
                     android:textColor="@color/mystic"
-                    android:backgroundTint="@color/mystic"
-                    android:textColorHint="@color/mystic"/>
+                    android:textColorHint="@color/mystic" />
 
                 <TextView
                     android:id="@+id/txtEnterState"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/enter_State"
                     android:layout_below="@+id/editCity"
                     android:layout_marginTop="7dp"
-                    android:textSize="24sp"
-                    android:textColor="@color/mystic"/>
+                    android:text="@string/enter_State"
+                    android:textColor="@color/mystic"
+                    android:textSize="24sp" />
 
                 <EditText
                     android:id="@+id/editState"
@@ -97,48 +98,46 @@
                     android:layout_below="@+id/editCity"
                     android:layout_alignStart="@+id/editCity"
                     android:layout_toEndOf="@+id/txtEnterState"
+                    android:autofillHints="state"
+                    android:backgroundTint="@color/mystic"
                     android:ems="11"
                     android:hint="@string/state_placeholder"
+                    android:imeOptions="actionDone"
                     android:inputType="text"
                     android:minHeight="48dp"
-                    android:autofillHints="state"
                     android:textColor="@color/mystic"
-                    android:backgroundTint="@color/mystic"
-                    android:textColorHint="@color/mystic"/>
+                    android:textColorHint="@color/mystic" />
 
-                <Button
+                <include
                     android:id="@+id/btnEnter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    layout="@layout/progress_button"
+                    android:layout_width="150dp"
+                    android:layout_height="45dp"
                     android:layout_below="@+id/editState"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/btn_Enter"
-                    android:textColor="@color/pickled_bluewood"
-                    android:backgroundTint="@color/mystic"/>
+                    android:layout_marginTop="10dp" />
 
                 <TextView
                     android:id="@+id/txtAlternate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/alternate"
                     android:layout_below="@+id/btnEnter"
-                    android:textSize="24sp"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginTop="15dp"
                     android:layout_marginBottom="15dp"
-                    android:textColor="@color/mystic"/>
+                    android:text="@string/alternate"
+                    android:textColor="@color/mystic"
+                    android:textSize="24sp" />
 
-                <Button
+                <include
                     android:id="@+id/btnUseGps"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    layout="@layout/progress_button"
+                    android:layout_width="250dp"
+                    android:layout_height="45dp"
                     android:layout_below="@+id/txtAlternate"
                     android:layout_centerHorizontal="true"
-                    android:text="@string/btn_UseGps"
-                    android:textColor="@color/pickled_bluewood"
-                    android:backgroundTint="@color/mystic"/>
+                    android:layout_marginBottom="25dp" />
             </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -9,9 +9,12 @@ import android.content.pm.PackageManager;
 import android.location.*;
 import android.os.*;
 import android.util.*;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import com.example.weatherapp.Models.*;
 import com.example.weatherapp.Network.*;
+import com.example.weatherapp.Views.Widgets.ProgressButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import java.util.*;
@@ -21,45 +24,62 @@ public class MainActivity extends Activity implements LocationListener {
 
     private Grid mGrid;
     private Forecast mForecast;
-    private Button mButtonEnter;
-    private Button mButtonUseGps;
+    private View mButtonEnter;
+    private ProgressButton mManualProgressButton;
+    private View mButtonUseGps;
+    private ProgressButton mGpsProgressButton;
     private EditText editCity;
     private EditText editState;
     private Pair<Double, Double> mCoordinates;
     private LocationManager mLocationManager;
+    private boolean mIsManual = false;
+    private boolean mIsGps = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editCity = findViewById(R.id.editCity);
-        editState = findViewById(R.id.editState);
-
         mButtonEnter = findViewById(R.id.btnEnter);
+        mManualProgressButton = new ProgressButton(MainActivity.this, mButtonEnter);
         mButtonEnter.setOnClickListener(view -> manuallyEnteredAction());
 
         mButtonUseGps = findViewById(R.id.btnUseGps);
+        mGpsProgressButton = new ProgressButton(MainActivity.this, mButtonUseGps, getString(R.string.btn_UseGps));
         mButtonUseGps.setOnClickListener(view -> gpsBtnAction());
+
+        editCity = findViewById(R.id.editCity);
+        editState = findViewById(R.id.editState);
+        editState.setOnEditorActionListener((textView, id, keyEvent) -> {
+            if(id == EditorInfo.IME_ACTION_DONE) {
+                manuallyEnteredAction();
+                return true;
+            }
+
+            return false;
+        });
     }
 
     private void manuallyEnteredAction() {
+        mButtonEnter.setClickable(false);
         if(!editCity.getText().toString().isEmpty() && !editState.getText().toString().isEmpty()) {
-            Handler handler = new Handler(Looper.getMainLooper());
+            mManualProgressButton.buttonActivated();
+            mIsManual = true;
+
+            Handler handler = new Handler();
             handler.post(() -> {
                 try {
                     mCoordinates = getLatLong(editCity.getText().toString() + ", " + editState.getText().toString());
                 }
                 catch (Exception e) {
                     e.printStackTrace();
+                    resetButtons();
                     Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT)
                             .setAction(R.string.retry, view -> manuallyEnteredAction()).show();
                 }
-                runOnUiThread(() -> {
-                    if(mCoordinates != null) {
-                        callGridService(mCoordinates.first, mCoordinates.second);
-                    }
-                });
+                if(mCoordinates != null) {
+                    callGridService(mCoordinates.first, mCoordinates.second);
+                }
             });
         }
         else {
@@ -69,10 +89,14 @@ public class MainActivity extends Activity implements LocationListener {
             if(editState.getText().toString().isEmpty()) {
                 editState.setError(getApplicationContext().getResources().getString(R.string.error_empty_state));
             }
+
+            resetButtons();
         }
     }
 
     private void gpsBtnAction() {
+        mButtonUseGps.setClickable(false);
+
         String[] PERMISSIONS;
         PERMISSIONS = new String[] {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE };
@@ -83,7 +107,10 @@ public class MainActivity extends Activity implements LocationListener {
             ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, 0);
         }
         else {
-            Handler handler = new Handler(Looper.getMainLooper());
+            mGpsProgressButton.buttonActivated();
+            mIsGps = true;
+
+            Handler handler = new Handler();
             handler.post(() -> {
                 Location gpsLocation;
                 Location networkLocation;
@@ -111,6 +138,7 @@ public class MainActivity extends Activity implements LocationListener {
                     }
                 }
                 catch(Exception e) {
+                    resetButtons();
                     e.printStackTrace();
                     Snackbar.make(findViewById(android.R.id.content), R.string.error_gps, Snackbar.LENGTH_SHORT)
                             .setAction(R.string.retry, view -> gpsBtnAction()).show();
@@ -124,6 +152,7 @@ public class MainActivity extends Activity implements LocationListener {
         Gson gson = new Gson();
         String forecastJson = gson.toJson(mForecast);
         intent.putExtra("forecast", forecastJson);
+        new Handler().postDelayed(this::resetButtons, 500);
         startActivity(intent);
     }
 
@@ -147,6 +176,7 @@ public class MainActivity extends Activity implements LocationListener {
             @Override
             public void onResponse(@NonNull Call<Grid> call, @NonNull Response<Grid> response) {
                 if(!response.isSuccessful()) {
+                    resetButtons();
                     Log.d("Code", "" + response.code());
                 }
                 else {
@@ -160,6 +190,8 @@ public class MainActivity extends Activity implements LocationListener {
 
             @Override
             public void onFailure(@NonNull Call<Grid> call, @NonNull Throwable t) {
+                resetButtons();
+                Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT).show();
                 Log.e("Failure", t.getMessage());
             }
         });
@@ -174,6 +206,7 @@ public class MainActivity extends Activity implements LocationListener {
                 if(!response.isSuccessful()) {
                     Log.d("Code", "" + response.code());
                     if(response.code() == 500) {
+                        resetButtons();
                         Snackbar.make(findViewById(android.R.id.content), R.string.error_not_supported, Snackbar.LENGTH_SHORT).show();
                     }
                 }
@@ -182,15 +215,34 @@ public class MainActivity extends Activity implements LocationListener {
                     mForecast = response.body();
 
                     Log.d("Response", response.body() != null ? response.body().getProperties().toString() : "");
+
+                    if (mIsManual) {
+                        mManualProgressButton.buttonFinished();
+                    }
+                    else if (mIsGps) {
+                        mGpsProgressButton.buttonFinished();
+                    }
+
                     startForecastActivity();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Forecast> call, @NonNull Throwable t) {
+                resetButtons();
+                Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT).show();
                 Log.e("Failure", t.getMessage());
             }
         });
+    }
+
+    private void resetButtons() {
+        mIsManual = false;
+        mManualProgressButton.buttonReset();
+        mIsGps = false;
+        mGpsProgressButton.buttonReset();
+        mButtonUseGps.setClickable(true);
+        mButtonEnter.setClickable(true);
     }
 
     @Override

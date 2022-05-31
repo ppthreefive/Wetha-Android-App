@@ -1,4 +1,4 @@
-package com.example.weatherapp;
+package com.example.weatherapp.Views.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.weatherapp.Models.*;
+import com.example.weatherapp.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

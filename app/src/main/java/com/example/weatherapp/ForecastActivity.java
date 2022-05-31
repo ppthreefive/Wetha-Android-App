@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.example.weatherapp.Models.*;
+import com.example.weatherapp.Views.Adapters.ForecastActivityAdapter;
 import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -119,7 +120,8 @@ public class ForecastActivity extends Activity {
             Period day = null;
             Period night = null;
 
-            if(i != periods.size() - 1 && isTheSameDay(periods.get(i).getStartTime(), periods.get(i + 1).getStartTime())) {
+            if(i != periods.size() - 1 && isTheSameDay(periods.get(i).getStartTime(), periods.get(i + 1).getStartTime())
+                    && !periods.get(i).getName().equals("Overnight")) {
 
                 name = simpleDateformat.format(periods.get(i).getStartTime());
                 day = periods.get(i);
@@ -146,10 +148,6 @@ public class ForecastActivity extends Activity {
         calendarOne.setTime(first);
         calendarTwo.setTime(second);
 
-        if(calendarOne.get(Calendar.DAY_OF_WEEK) != calendarTwo.get(Calendar.DAY_OF_WEEK)) {
-            return false;
-        }
-
-        return true;
+        return calendarOne.get(Calendar.DAY_OF_WEEK) == calendarTwo.get(Calendar.DAY_OF_WEEK);
     }
 }
