@@ -118,7 +118,7 @@ public class ForecastActivity extends Activity {
         for(int i = 0; i < periods.size(); i++) {
             String name;
             Period day = null;
-            Period night = null;
+            Period night;
 
             if(i != periods.size() - 1 && isTheSameDay(periods.get(i).getStartTime(), periods.get(i + 1).getStartTime())
                     && !periods.get(i).getName().equals("Overnight")) {
