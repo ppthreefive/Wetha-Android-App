@@ -49,7 +49,8 @@ public class MainActivity extends Activity implements LocationListener {
             handler.post(() -> {
                 try {
                     mCoordinates = getLatLong(editCity.getText().toString() + ", " + editState.getText().toString());
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                     Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT)
                             .setAction(R.string.retry, view -> manuallyEnteredAction()).show();

@@ -1,5 +1,6 @@
 package com.example.weatherapp.Models;
 
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,8 +13,8 @@ import lombok.ToString;
 public class Period {
     private int number;
     private String name;
-    private String startTime;
-    private String endTime;
+    private Date startTime;
+    private Date endTime;
     private boolean isDayTime;
     private int temperature;
     private String temperatureUnit;

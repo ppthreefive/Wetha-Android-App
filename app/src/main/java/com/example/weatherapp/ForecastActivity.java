@@ -8,7 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.weatherapp.Models.*;
 import com.google.gson.Gson;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class ForecastActivity extends Activity {
 
@@ -109,55 +112,49 @@ public class ForecastActivity extends Activity {
 
     private void combineFullDaysInForecast() {
         List<Period> periods = forecast.getProperties().getPeriods();
+        SimpleDateFormat simpleDateformat = new SimpleDateFormat("EEEE", Locale.US);
 
-        int cursor = 0;
-        boolean nightStart = false;
-
-        while(cursor != periods.size()) {
+        for(int i = 0; i < periods.size(); i++) {
             String name;
             Period day = null;
             Period night = null;
 
-            if(cursor == 0) {
-                name = periods.get(cursor).getName();
-            }
-            else {
-                if(periods.get(cursor).getName().contains("Night")){
-                    name = periods.get(cursor - 1).getName();
-                }
-                else {
-                    name = periods.get(cursor).getName();
-                }
-            }
+            if(i != periods.size() - 1 && isTwentyFourHours(periods.get(i).getStartTime(), periods.get(i + 1).getEndTime()) &&
+                isTheSameDay(periods.get(i).getStartTime(), periods.get(i + 1).getStartTime())) {
 
-            if(cursor == 0) {
-                if(name.equals("Tonight") || name.equals("Overnight")) {
-                    night = periods.get(cursor);
-                    cursor++;
-                    nightStart = true;
-                }
-                else {
-                    day = periods.get(cursor);
-                    night = periods.get(cursor + 1);
-                    cursor++;
-                }
-            }
-            else if (nightStart){
-                day = periods.get(cursor - 1);
-                night = periods.get(cursor);
-                cursor++;
+                name = simpleDateformat.format(periods.get(i).getStartTime());
+                day = periods.get(i);
+                night = periods.get(i + 1);
+                i = i + 1;
             }
             else {
-                day = periods.get(cursor);
-                night = periods.get(cursor + 1);
-                cursor++;
+                name = simpleDateformat.format(periods.get(i).getStartTime());
+                night = periods.get(i);
             }
 
             mFullDays.add(new FullDayCard(day, night, name));
-
-            if(cursor != periods.size()){
-                cursor++;
-            }
         }
+
+        if(mFullDays.get(mFullDays.size() - 1).getDayShortForecast() == null) {
+            mFullDays.remove(mFullDays.size() - 1);
+        }
+    }
+
+    private boolean isTwentyFourHours(Date start, Date end) {
+        return Math.abs(start.getTime() - end.getTime()) == TimeUnit.HOURS.toMillis(24);
+    }
+
+    private boolean isTheSameDay(Date first, Date second) {
+        Calendar calendarOne = Calendar.getInstance();
+        Calendar calendarTwo = Calendar.getInstance();
+
+        calendarOne.setTime(first);
+        calendarTwo.setTime(second);
+
+        if(calendarOne.get(Calendar.DAY_OF_WEEK) != calendarTwo.get(Calendar.DAY_OF_WEEK)) {
+            return false;
+        }
+
+        return true;
     }
 }
