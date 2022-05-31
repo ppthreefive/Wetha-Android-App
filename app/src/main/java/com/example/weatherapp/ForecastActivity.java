@@ -118,9 +118,8 @@ public class ForecastActivity extends Activity {
             String name;
             Period day = null;
             Period night = null;
-
-            if(i != periods.size() - 1 && isTwentyFourHours(periods.get(i).getStartTime(), periods.get(i + 1).getEndTime()) &&
-                isTheSameDay(periods.get(i).getStartTime(), periods.get(i + 1).getStartTime())) {
+            // && isTwentyFourHours(periods.get(i).getStartTime(), periods.get(i + 1).getEndTime())
+            if(i != periods.size() - 1 && isTheSameDay(periods.get(i).getStartTime(), periods.get(i + 1).getStartTime())) {
 
                 name = simpleDateformat.format(periods.get(i).getStartTime());
                 day = periods.get(i);
@@ -138,10 +137,6 @@ public class ForecastActivity extends Activity {
         if(mFullDays.get(mFullDays.size() - 1).getDayShortForecast() == null) {
             mFullDays.remove(mFullDays.size() - 1);
         }
-    }
-
-    private boolean isTwentyFourHours(Date start, Date end) {
-        return Math.abs(start.getTime() - end.getTime()) == TimeUnit.HOURS.toMillis(24);
     }
 
     private boolean isTheSameDay(Date first, Date second) {
