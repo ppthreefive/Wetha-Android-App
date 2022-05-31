@@ -15,8 +15,11 @@
     <string name="error_network">There was a problem getting data. \nPlease try again.</string>
     <string name="error_gps">There was a problem gathering GPS data. \nPlease try again.</string>
     <string name="retry">RETRY</string>
-    <string name="currently">Currently: %1$s°%2$s</string>
-    <string name="tonight">Tonight: %1$s°%2$s</string>
+    <string name="currently">Currently</string>
+    <string name="today">Today</string>
+    <string name="tonight">Tonight</string>
+    <string name="dynamicTemp">%1$s: %2$s°%3$s</string>
+    <string name="tonightTemp">Tonight: %1$s°%2$s</string>
     <string name="error_empty_city">You must enter a city.</string>
     <string name="error_empty_state">You must enter a state.</string>
 </resources>

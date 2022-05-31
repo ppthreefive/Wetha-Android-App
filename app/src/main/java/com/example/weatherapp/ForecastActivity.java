@@ -4,14 +4,11 @@ import androidx.recyclerview.widget.*;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import com.example.weatherapp.Models.*;
 import com.google.gson.Gson;
-
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class ForecastActivity extends Activity {
 
@@ -48,8 +45,9 @@ public class ForecastActivity extends Activity {
     }
 
     private void setUpCurrentDayViews() {
-        if(!mFullDays.get(0).getName().equals("Today") && !mFullDays.get(0).getName().equals("This Afternoon")) {
-            mCurrentTemp.setText(String.format(mCurrentTemp.getText().toString(), mFullDays.get(0).getNightTemp(), mFullDays.get(0).getTempUnit()));
+        if(mFullDays.get(0).getDayShortForecast() == null) {
+            mCurrentTemp.setText(String.format(mCurrentTemp.getText().toString(), getString(R.string.tonight),
+                    mFullDays.get(0).getNightTemp(), mFullDays.get(0).getTempUnit()));
             ((ViewGroup)mTonightTemp.getParent()).removeView(mTonightTemp);
             ((ViewGroup)mTonightImage.getParent()).removeView(mTonightImage);
             mDetailedForecast.setText(mFullDays.get(0).getDetailedNightForecast());
@@ -67,8 +65,10 @@ public class ForecastActivity extends Activity {
             }
         }
         else {
-            mCurrentTemp.setText(String.format(mCurrentTemp.getText().toString(), mFullDays.get(0).getDayTemp(), mFullDays.get(0).getTempUnit()));
-            mTonightTemp.setText(String.format(mTonightTemp.getText().toString(), mFullDays.get(0).getNightTemp(), mFullDays.get(0).getTempUnit()));
+            mCurrentTemp.setText(String.format(mCurrentTemp.getText().toString(), getString(R.string.today),
+                    mFullDays.get(0).getDayTemp(), mFullDays.get(0).getTempUnit()));
+            mTonightTemp.setText(String.format(mTonightTemp.getText().toString(), mFullDays.get(0).getNightTemp(),
+                    mFullDays.get(0).getTempUnit()));
             mDetailedForecast.setText(mFullDays.get(0).getDetailedDayForecast());
 
             String shortForecastNight = mFullDays.get(0).getNightShortForecast();
@@ -118,7 +118,7 @@ public class ForecastActivity extends Activity {
             String name;
             Period day = null;
             Period night = null;
-            // && isTwentyFourHours(periods.get(i).getStartTime(), periods.get(i + 1).getEndTime())
+
             if(i != periods.size() - 1 && isTheSameDay(periods.get(i).getStartTime(), periods.get(i + 1).getStartTime())) {
 
                 name = simpleDateformat.format(periods.get(i).getStartTime());

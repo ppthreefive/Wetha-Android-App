@@ -18,11 +18,11 @@
                 android:id="@+id/currentTemp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="38sp"
                 android:layout_marginStart="13dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/currently"
-                android:textColor="@color/pickled_bluewood"/>
+                android:text="@string/dynamicTemp"
+                android:textColor="@color/pickled_bluewood"
+                android:textSize="38sp" />
 
             <ImageView
                 android:id="@+id/currentIcon"
@@ -53,7 +53,7 @@
                 android:textSize="24sp"
                 android:layout_marginStart="13dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/tonight"
+                android:text="@string/tonightTemp"
                 android:textColor="@color/pickled_bluewood"/>
         </RelativeLayout>
 
