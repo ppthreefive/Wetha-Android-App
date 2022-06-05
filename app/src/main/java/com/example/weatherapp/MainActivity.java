@@ -63,29 +63,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         });
 
         mMainViewModel.getAllDataWithGeocoder(this,null).observe(this, forecast -> {
-            if(forecast != null) {
-                mForecast = forecast;
-
+            if(forecast == null) {
                 if(mIsManual) {
-                    startForecastActivity();
+                    Snackbar.make(findViewById(android.R.id.content), R.string.error_not_supported, Snackbar.LENGTH_SHORT).show();
                 }
-            }
-            else {
                 resetButtons();
+                return;
             }
+
+            mForecast = forecast;
+            startForecastActivity();
         });
 
         mMainViewModel.getAllDataWithCoordinates(null,null).observe(this, forecast -> {
-            if(forecast != null) {
-                mForecast = forecast;
-
+            if(forecast == null) {
                 if(mIsGps) {
-                    startForecastActivity();
+                    Snackbar.make(findViewById(android.R.id.content), R.string.error_not_supported, Snackbar.LENGTH_SHORT).show();
                 }
-            }
-            else {
                 resetButtons();
+                return;
             }
+
+            mForecast = forecast;
+            startForecastActivity();
         });
     }
 

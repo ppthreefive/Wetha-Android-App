@@ -14,7 +14,8 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class MainViewModel extends ViewModel {
     private final CompositeDisposable disposables = new CompositeDisposable();
-    private MutableLiveData<Forecast> mForecast = new MutableLiveData<>();
+    private MutableLiveData<Forecast> mForecastGeo = new MutableLiveData<>();
+    private MutableLiveData<Forecast> mForecastCoor = new MutableLiveData<>();
     private WeatherRepository mWeatherRepository = new WeatherRepository();
 
     public LiveData<Forecast> getAllDataWithGeocoder(Context context, String location) {
@@ -24,21 +25,18 @@ public class MainViewModel extends ViewModel {
         subject.onNext(geocoder);
         disposables.add(subject.hide()
                 .map(geo -> geocoder.getFromLocationName(location, 1))
-                .flatMap(response -> {
-                    Log.d("View Model", response.toString());
-                    return mWeatherRepository.executeGridDetailsApi(response.get(0).getLatitude(), response.get(0).getLongitude());
-                })
+                .flatMap(response -> mWeatherRepository.executeGridDetailsApi(response.get(0).getLatitude(), response.get(0).getLongitude()))
                 .flatMap(response -> mWeatherRepository.executeForecastApi(response.getProperties().getGridId(),
                         response.getProperties().getGridX(), response.getProperties().getGridY()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        result -> mForecast.setValue(result),
-                        throwable -> mForecast.setValue(null)
+                        result -> mForecastGeo.setValue(result),
+                        throwable -> mForecastGeo.setValue(null)
                 )
         );
 
-        return mForecast;
+        return mForecastGeo;
     }
 
     public LiveData<Forecast> getAllDataWithCoordinates(Double latitude, Double longitude) {
@@ -49,13 +47,13 @@ public class MainViewModel extends ViewModel {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            result -> mForecast.setValue(result),
-                            throwable -> mForecast.setValue(null)
+                            result -> mForecastCoor.setValue(result),
+                            throwable -> mForecastCoor.setValue(null)
                     )
             );
         }
 
-        return mForecast;
+        return mForecastCoor;
     }
 
     @Override
