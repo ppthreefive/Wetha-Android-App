@@ -24,7 +24,6 @@ import java.util.*;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
-    private Forecast mForecast;
     private View mButtonEnter;
     private ProgressButton mManualProgressButton;
     private View mButtonUseGps;
@@ -33,9 +32,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private EditText editState;
     private Pair<Double, Double> mCoordinates;
     private LocationManager mLocationManager;
+    private MainViewModel mMainViewModel;
     private boolean mIsManual = false;
     private boolean mIsGps = false;
-    private MainViewModel mMainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +70,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 return;
             }
 
-            mForecast = forecast;
-            startForecastActivity();
+            startForecastActivity(forecast);
         });
 
         mMainViewModel.getAllDataWithCoordinates(null,null).observe(this, forecast -> {
@@ -84,8 +82,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 return;
             }
 
-            mForecast = forecast;
-            startForecastActivity();
+            startForecastActivity(forecast);
         });
     }
 
@@ -170,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
     }
 
-    private void startForecastActivity() {
+    private void startForecastActivity(Forecast forecast) {
         if(mIsManual) {
             mManualProgressButton.buttonFinished();
         }
@@ -180,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         Intent intent = new Intent(getApplicationContext(), ForecastActivity.class);
         Gson gson = new Gson();
-        String forecastJson = gson.toJson(mForecast);
+        String forecastJson = gson.toJson(forecast);
         intent.putExtra("forecast", forecastJson);
         new Handler().postDelayed(this::resetButtons, 500);
         startActivity(intent);
