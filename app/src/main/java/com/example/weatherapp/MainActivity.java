@@ -116,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
         mGpsProgressButton.buttonActivated();
         mIsGps = true;
 
-        String[] PERMISSIONS;
-        PERMISSIONS = new String[] { Manifest.permission.ACCESS_FINE_LOCATION,
+        String[] PERMISSIONS = new String[] { Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE };
 
         if(ActivityCompat.checkSelfPermission(MainActivity.this, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED
