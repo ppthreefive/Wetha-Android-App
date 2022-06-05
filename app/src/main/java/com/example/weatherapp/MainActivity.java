@@ -1,28 +1,29 @@
 package com.example.weatherapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
-import android.app.Activity;
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.location.*;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.*;
 import android.util.*;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import com.example.weatherapp.Models.*;
-import com.example.weatherapp.Network.*;
+import com.example.weatherapp.Views.ViewModels.MainViewModel;
 import com.example.weatherapp.Views.Widgets.ProgressButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import java.util.*;
-import retrofit2.*;
 
-public class MainActivity extends Activity implements LocationListener {
+public class MainActivity extends AppCompatActivity implements LocationListener {
 
-    private Grid mGrid;
     private Forecast mForecast;
     private View mButtonEnter;
     private ProgressButton mManualProgressButton;
@@ -34,11 +35,13 @@ public class MainActivity extends Activity implements LocationListener {
     private LocationManager mLocationManager;
     private boolean mIsManual = false;
     private boolean mIsGps = false;
+    private MainViewModel mMainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mMainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
         mButtonEnter = findViewById(R.id.btnEnter);
         mManualProgressButton = new ProgressButton(MainActivity.this, mButtonEnter);
@@ -58,6 +61,32 @@ public class MainActivity extends Activity implements LocationListener {
 
             return false;
         });
+
+        mMainViewModel.getAllDataWithGeocoder(this,null).observe(this, forecast -> {
+            if(forecast != null) {
+                mForecast = forecast;
+
+                if(mIsManual) {
+                    startForecastActivity();
+                }
+            }
+            else {
+                resetButtons();
+            }
+        });
+
+        mMainViewModel.getAllDataWithCoordinates(null,null).observe(this, forecast -> {
+            if(forecast != null) {
+                mForecast = forecast;
+
+                if(mIsGps) {
+                    startForecastActivity();
+                }
+            }
+            else {
+                resetButtons();
+            }
+        });
     }
 
     private void manuallyEnteredAction() {
@@ -66,50 +95,44 @@ public class MainActivity extends Activity implements LocationListener {
             mManualProgressButton.buttonActivated();
             mIsManual = true;
 
-            Handler handler = new Handler();
-            handler.post(() -> {
-                try {
-                    mCoordinates = getLatLong(editCity.getText().toString() + ", " + editState.getText().toString());
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    resetButtons();
-                    Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT)
-                            .setAction(R.string.retry, view -> manuallyEnteredAction()).show();
-                }
-                if(mCoordinates != null) {
-                    callGridService(mCoordinates.first, mCoordinates.second);
-                }
-            });
-        }
-        else {
-            if(editCity.getText().toString().isEmpty()) {
-                editCity.setError(getApplicationContext().getResources().getString(R.string.error_empty_city));
-            }
-            if(editState.getText().toString().isEmpty()) {
-                editState.setError(getApplicationContext().getResources().getString(R.string.error_empty_state));
+            if(!isNetworkAvailable()) {
+                resetButtons();
+                Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT)
+                        .setAction(R.string.retry, view -> manuallyEnteredAction()).show();
+                return;
             }
 
-            resetButtons();
+            mMainViewModel.getAllDataWithGeocoder(this, editCity.getText().toString() + ", " + editState.getText().toString()).getValue();
+
+            return;
         }
+
+        if(editCity.getText().toString().isEmpty()) {
+            editCity.setError(getApplicationContext().getResources().getString(R.string.error_empty_city));
+        }
+        if(editState.getText().toString().isEmpty()) {
+            editState.setError(getApplicationContext().getResources().getString(R.string.error_empty_state));
+        }
+
+        resetButtons();
     }
 
     private void gpsBtnAction() {
         mButtonUseGps.setClickable(false);
+        mGpsProgressButton.buttonActivated();
+        mIsGps = true;
 
         String[] PERMISSIONS;
         PERMISSIONS = new String[] {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE };
 
-        if(ActivityCompat.checkSelfPermission(getApplicationContext(), PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getApplicationContext(), PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getApplicationContext(), PERMISSIONS[2]) != PackageManager.PERMISSION_GRANTED) {
+        if(ActivityCompat.checkSelfPermission(MainActivity.this, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(MainActivity.this, PERMISSIONS[1]) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(MainActivity.this, PERMISSIONS[2]) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, 0);
+            resetButtons();
         }
         else {
-            mGpsProgressButton.buttonActivated();
-            mIsGps = true;
-
             Handler handler = new Handler();
             handler.post(() -> {
                 Location gpsLocation;
@@ -125,16 +148,16 @@ public class MainActivity extends Activity implements LocationListener {
                     networkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
                     if (gpsLocation != null) {
-                        callGridService(gpsLocation.getLatitude(), gpsLocation.getLongitude());
+                        mMainViewModel.getAllDataWithCoordinates(gpsLocation.getLatitude(), gpsLocation.getLongitude()).getValue();
                         Log.d("GPS LOCATION", "" + gpsLocation.getLatitude() + ", " + gpsLocation.getLongitude());
                     }
                     else if (networkLocation != null) {
-                        callGridService(networkLocation.getLatitude(), networkLocation.getLongitude());
+                        mMainViewModel.getAllDataWithCoordinates(networkLocation.getLatitude(), networkLocation.getLongitude()).getValue();
                         Log.d("NETWORK LOCATION", "" + networkLocation.getLatitude() + ", " + networkLocation.getLongitude());
                     }
                     else {
                         mLocationManager.requestLocationUpdates(bestProvider, 1000, 0, MainActivity.this);
-                        callGridService(mCoordinates.first, mCoordinates.second);
+                        mMainViewModel.getAllDataWithCoordinates(mCoordinates.first, mCoordinates.second).getValue();
                     }
                 }
                 catch(Exception e) {
@@ -148,6 +171,13 @@ public class MainActivity extends Activity implements LocationListener {
     }
 
     private void startForecastActivity() {
+        if(mIsManual) {
+            mManualProgressButton.buttonFinished();
+        }
+        else if(mIsGps) {
+            mGpsProgressButton.buttonFinished();
+        }
+
         Intent intent = new Intent(getApplicationContext(), ForecastActivity.class);
         Gson gson = new Gson();
         String forecastJson = gson.toJson(mForecast);
@@ -156,84 +186,11 @@ public class MainActivity extends Activity implements LocationListener {
         startActivity(intent);
     }
 
-    private Pair<Double, Double> getLatLong(String location) throws Exception {
-        Pair<Double, Double> latLong;
-
-        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-        List<Address> addresses;
-
-        addresses = geocoder.getFromLocationName(location, 1);
-        latLong = new Pair<>(addresses.get(0).getLatitude(), addresses.get(0).getLongitude());
-        Log.d("Coordinates", latLong.toString());
-
-        return latLong;
-    }
-
-    private void callGridService(double latitude, double longitude) {
-        GetWeatherService service = RetrofitClientInstance.getRetrofitInstance().create(GetWeatherService.class);
-        Call<Grid> call = service.getGridDetails(latitude, longitude);
-        call.enqueue(new Callback<Grid>() {
-            @Override
-            public void onResponse(@NonNull Call<Grid> call, @NonNull Response<Grid> response) {
-                if(!response.isSuccessful()) {
-                    resetButtons();
-                    Log.d("Code", "" + response.code());
-                }
-                else {
-                    Log.d("Response", "SUCCESS");
-                    mGrid = response.body();
-
-                    Log.d("Response", response.body() != null ? response.body().toString() : "");
-                    callForecastService();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Grid> call, @NonNull Throwable t) {
-                resetButtons();
-                Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT).show();
-                Log.e("Failure", t.getMessage());
-            }
-        });
-    }
-
-    private void callForecastService() {
-        GetWeatherService service = RetrofitClientInstance.getRetrofitInstance().create(GetWeatherService.class);
-        Call<Forecast> call = service.getForecast(mGrid.getProperties().getGridId(), mGrid.getProperties().getGridX(), mGrid.getProperties().getGridY());
-        call.enqueue(new Callback<Forecast>() {
-            @Override
-            public void onResponse(@NonNull Call<Forecast> call, @NonNull Response<Forecast> response) {
-                if(!response.isSuccessful()) {
-                    Log.d("Code", "" + response.code());
-                    if(response.code() == 500) {
-                        resetButtons();
-                        Snackbar.make(findViewById(android.R.id.content), R.string.error_not_supported, Snackbar.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    Log.d("Response", "SUCCESS");
-                    mForecast = response.body();
-
-                    Log.d("Response", response.body() != null ? response.body().getProperties().toString() : "");
-
-                    if (mIsManual) {
-                        mManualProgressButton.buttonFinished();
-                    }
-                    else if (mIsGps) {
-                        mGpsProgressButton.buttonFinished();
-                    }
-
-                    startForecastActivity();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Forecast> call, @NonNull Throwable t) {
-                resetButtons();
-                Snackbar.make(findViewById(android.R.id.content), R.string.error_network, Snackbar.LENGTH_SHORT).show();
-                Log.e("Failure", t.getMessage());
-            }
-        });
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private void resetButtons() {
