@@ -148,9 +148,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent(getApplicationContext(), ForecastActivity.class);
-        Gson gson = new Gson();
-        String forecastJson = gson.toJson(forecast);
-        intent.putExtra("forecast", forecastJson);
+        intent.putExtra("forecast", new Gson().toJson(forecast));
         new Handler().postDelayed(this::resetButtons, 500);
         startActivity(intent);
     }
