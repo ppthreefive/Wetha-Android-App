@@ -14,6 +14,7 @@ import android.os.*;
 import android.util.*;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import com.example.weatherapp.Models.*;
 import com.example.weatherapp.Views.ViewModels.MainViewModel;
@@ -54,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         editState = findViewById(R.id.editState);
         editState.setOnEditorActionListener((textView, id, keyEvent) -> {
             if(id == EditorInfo.IME_ACTION_DONE) {
-                manuallyEnteredAction();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(editState.getApplicationWindowToken(), 0);
                 return true;
             }
 
