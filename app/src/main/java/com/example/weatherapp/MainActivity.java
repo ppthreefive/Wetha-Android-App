@@ -1,13 +1,11 @@
 package com.example.weatherapp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
 import android.content.*;
 import android.content.pm.PackageManager;
-import android.location.*;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.*;
@@ -21,9 +19,8 @@ import com.example.weatherapp.Views.ViewModels.MainViewModel;
 import com.example.weatherapp.Views.Widgets.ProgressButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
-import java.util.*;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity {
 
     private View mButtonEnter;
     private ProgressButton mManualProgressButton;
@@ -31,8 +28,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private ProgressButton mGpsProgressButton;
     private EditText editCity;
     private EditText editState;
-    private Pair<Double, Double> mCoordinates;
-    private LocationManager mLocationManager;
     private MainViewModel mMainViewModel;
     private boolean mIsManual = false;
     private boolean mIsGps = false;
@@ -122,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mIsGps = true;
 
         String[] PERMISSIONS;
-        PERMISSIONS = new String[] {Manifest.permission.ACCESS_FINE_LOCATION,
+        PERMISSIONS = new String[] { Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE };
 
         if(ActivityCompat.checkSelfPermission(MainActivity.this, PERMISSIONS[0]) != PackageManager.PERMISSION_GRANTED
@@ -130,43 +125,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 || ActivityCompat.checkSelfPermission(MainActivity.this, PERMISSIONS[2]) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, PERMISSIONS, 0);
             resetButtons();
+            return;
         }
-        else {
-            Handler handler = new Handler();
-            handler.post(() -> {
-                Location gpsLocation;
-                Location networkLocation;
 
-                try {
-                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Pair<Double, Double> coordinates = mMainViewModel.getLocation();
 
-                    Criteria criteria = new Criteria();
-                    String bestProvider = String.valueOf(mLocationManager.getBestProvider(criteria, true));
-
-                    gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    networkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-                    if (gpsLocation != null) {
-                        mMainViewModel.getAllDataWithCoordinates(gpsLocation.getLatitude(), gpsLocation.getLongitude()).getValue();
-                        Log.d("GPS LOCATION", "" + gpsLocation.getLatitude() + ", " + gpsLocation.getLongitude());
-                    }
-                    else if (networkLocation != null) {
-                        mMainViewModel.getAllDataWithCoordinates(networkLocation.getLatitude(), networkLocation.getLongitude()).getValue();
-                        Log.d("NETWORK LOCATION", "" + networkLocation.getLatitude() + ", " + networkLocation.getLongitude());
-                    }
-                    else {
-                        mLocationManager.requestLocationUpdates(bestProvider, 1000, 0, MainActivity.this);
-                        mMainViewModel.getAllDataWithCoordinates(mCoordinates.first, mCoordinates.second).getValue();
-                    }
-                }
-                catch(Exception e) {
-                    resetButtons();
-                    e.printStackTrace();
-                    Snackbar.make(findViewById(android.R.id.content), R.string.error_gps, Snackbar.LENGTH_SHORT)
-                            .setAction(R.string.retry, view -> gpsBtnAction()).show();
-                }
-            });
+        if(coordinates == null) {
+            Snackbar.make(findViewById(android.R.id.content), R.string.error_gps, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.retry, view -> gpsBtnAction()).show();
+            return;
         }
+
+        mMainViewModel.getAllDataWithCoordinates(coordinates.first, coordinates.second).getValue();
     }
 
     private void startForecastActivity(Forecast forecast) {
@@ -199,36 +169,5 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mGpsProgressButton.buttonReset();
         mButtonUseGps.setClickable(true);
         mButtonEnter.setClickable(true);
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        mLocationManager.removeUpdates(this);
-        mCoordinates = new Pair<>(location.getLatitude(), location.getLongitude());
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull List<Location> locations) {
-
-    }
-
-    @Override
-    public void onFlushComplete(int requestCode) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(@NonNull String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(@NonNull String provider) {
-
     }
 }
