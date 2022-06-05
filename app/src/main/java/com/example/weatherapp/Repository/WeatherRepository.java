@@ -5,7 +5,7 @@ import com.example.weatherapp.Network.*;
 import io.reactivex.Observable;
 
 public class WeatherRepository {
-    private WeatherService mService;
+    private final WeatherService mService;
 
     public WeatherRepository() {
         this.mService = ClientInstance.getClient();

@@ -3,15 +3,13 @@ package com.example.weatherapp.Views.ViewModels;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
+import android.location.*;
 import android.util.*;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.*;
 import com.example.weatherapp.Models.*;
 import com.example.weatherapp.Repository.WeatherRepository;
-import java.util.Locale;
+import java.util.*;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -19,9 +17,9 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class MainViewModel extends AndroidViewModel {
     private final CompositeDisposable disposables = new CompositeDisposable();
-    private MutableLiveData<Forecast> mForecastGeo = new MutableLiveData<>();
-    private MutableLiveData<Forecast> mForecastCoor = new MutableLiveData<>();
-    private WeatherRepository mWeatherRepository = new WeatherRepository();
+    private final MutableLiveData<Forecast> mForecastGeo = new MutableLiveData<>();
+    private final MutableLiveData<Forecast> mForecastCoor = new MutableLiveData<>();
+    private final WeatherRepository mWeatherRepository = new WeatherRepository();
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -65,7 +63,7 @@ public class MainViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        result -> mForecastGeo.setValue(result),
+                        mForecastGeo::setValue,
                         throwable -> mForecastGeo.setValue(null)
                 )
         );
@@ -81,7 +79,7 @@ public class MainViewModel extends AndroidViewModel {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            result -> mForecastCoor.setValue(result),
+                            mForecastCoor::setValue,
                             throwable -> mForecastCoor.setValue(null)
                     )
             );

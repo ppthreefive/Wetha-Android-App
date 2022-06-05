@@ -1,7 +1,7 @@
 package com.example.weatherapp.Models;
 
+import androidx.annotation.NonNull;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,14 +12,15 @@ import lombok.Setter;
 public class ForecastProperties {
     private List<Period> periods;
 
+    @NonNull
     @Override
     public String toString() {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         for (Period p : this.periods) {
-            result += p.toString() + '\n';
+            result.append(p.toString()).append('\n');
         }
 
-        return result;
+        return result.toString();
     }
 }

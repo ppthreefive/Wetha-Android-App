@@ -24,7 +24,7 @@ public class ForecastViewModel extends AndroidViewModel {
             Period night;
 
             if(i != periods.size() - 1 && isTheSameDay(periods.get(i).getStartTime(), periods.get(i + 1).getStartTime())
-                    && !periods.get(i).getName().equals("Overnight")) {
+                    && !("Overnight").equals(periods.get(i).getName())) {
 
                 name = simpleDateformat.format(periods.get(i).getStartTime());
                 day = periods.get(i);

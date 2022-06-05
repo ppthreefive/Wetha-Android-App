@@ -20,16 +20,12 @@ public class ForecastActivity extends AppCompatActivity {
     private TextView mDetailedForecast;
     private ImageView mTonightImage;
     private ImageView mCurrentImage;
-    private RecyclerView mRecyclerView;
-    private ForecastActivityAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private ForecastViewModel mForecastViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
-        mForecastViewModel = new ViewModelProvider(this).get(ForecastViewModel.class);
+        ForecastViewModel mForecastViewModel = new ViewModelProvider(this).get(ForecastViewModel.class);
         mFullDays = mForecastViewModel.combineFullDaysInForecast(new Gson().fromJson(getIntent()
                 .getStringExtra("forecast"), Forecast.class));
 
@@ -98,14 +94,14 @@ public class ForecastActivity extends AppCompatActivity {
     private void createRecyclerView() {
         mFullDays.remove(0);
 
-        mRecyclerView = findViewById(R.id.forecastRecyclerView);
-        mAdapter = new ForecastActivityAdapter(mFullDays);
-        mAdapter.onClickListener(v -> {
+        RecyclerView recyclerView = findViewById(R.id.forecastRecyclerView);
+        ForecastActivityAdapter adapter = new ForecastActivityAdapter(mFullDays);
+        adapter.onClickListener(v -> {
 
         });
-        mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
     }
 }
