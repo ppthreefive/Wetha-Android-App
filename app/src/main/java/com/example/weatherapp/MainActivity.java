@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
         editState = findViewById(R.id.editState);
         editState.setOnEditorActionListener((textView, id, keyEvent) -> {
             if(id == EditorInfo.IME_ACTION_DONE) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(editState.getApplicationWindowToken(), 0);
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(editState.getApplicationWindowToken(), 0);
                 return true;
             }
 
@@ -147,10 +147,9 @@ public class MainActivity extends AppCompatActivity {
             mGpsProgressButton.buttonFinished();
         }
 
-        Intent intent = new Intent(getApplicationContext(), ForecastActivity.class);
-        intent.putExtra("forecast", new Gson().toJson(forecast));
         new Handler().postDelayed(this::resetButtons, 500);
-        startActivity(intent);
+        startActivity(new Intent(getApplicationContext(), ForecastActivity.class)
+                .putExtra("forecast", new Gson().toJson(forecast)));
     }
 
     private boolean isNetworkAvailable() {
