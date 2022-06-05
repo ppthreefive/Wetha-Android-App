@@ -1,27 +1,16 @@
 package com.example.weatherapp.Views.ViewModels;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Handler;
 import android.util.*;
-
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.*;
-
-import com.example.weatherapp.MainActivity;
 import com.example.weatherapp.Models.*;
-import com.example.weatherapp.R;
 import com.example.weatherapp.Repository.WeatherRepository;
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.Locale;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
