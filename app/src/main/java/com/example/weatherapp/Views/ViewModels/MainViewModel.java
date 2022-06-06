@@ -17,7 +17,7 @@ import io.reactivex.subjects.BehaviorSubject;
 public class MainViewModel extends AndroidViewModel {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private final MutableLiveData<Forecast> mForecastGeo = new MutableLiveData<>();
-    private final MutableLiveData<Forecast> mForecastCoor = new MutableLiveData<>();
+    private final MutableLiveData<Forecast> mForecastGps = new MutableLiveData<>();
     private final WeatherRepository mWeatherRepository = new WeatherRepository();
 
     public MainViewModel(@NonNull Application application) {
@@ -45,7 +45,7 @@ public class MainViewModel extends AndroidViewModel {
         return mForecastGeo;
     }
 
-    public LiveData<Forecast> getAllDataWithCoordinates() {
+    public LiveData<Forecast> getAllDataWithGps() {
         LocationManager locationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
         BehaviorSubject<LocationManager> subject = BehaviorSubject.create();
         subject.onNext(locationManager);
@@ -71,7 +71,7 @@ public class MainViewModel extends AndroidViewModel {
                 )
         );
 
-        return mForecastCoor;
+        return mForecastGps;
     }
 
     @Override

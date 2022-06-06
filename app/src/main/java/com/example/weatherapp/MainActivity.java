@@ -8,7 +8,6 @@ import android.content.*;
 import android.content.pm.PackageManager;
 import android.net.*;
 import android.os.*;
-import android.util.*;
 import android.view.View;
 import android.view.inputmethod.*;
 import android.widget.*;
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             startForecastActivity(forecast);
         });
 
-        mMainViewModel.getAllDataWithCoordinates().observe(this, forecast -> {
+        mMainViewModel.getAllDataWithGps().observe(this, forecast -> {
             if(forecast == null) {
                 if(mIsGps) {
                     Snackbar.make(findViewById(android.R.id.content), R.string.error_gps, Snackbar.LENGTH_SHORT)
@@ -95,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            mMainViewModel.getAllDataWithGeocoder(this, editCity.getText().toString() + ", " + editState.getText().toString()).getValue();
+            mMainViewModel.getAllDataWithGeocoder(this, editCity.getText().toString() + ", "
+                    + editState.getText().toString()).getValue();
 
             return;
         }
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        mMainViewModel.getAllDataWithCoordinates().getValue();
+        mMainViewModel.getAllDataWithGps().getValue();
     }
 
     private void startForecastActivity(Forecast forecast) {
