@@ -4,8 +4,12 @@ import android.content.Context;
 import android.view.View;
 import android.view.animation.*;
 import android.widget.*;
+
+import androidx.annotation.ColorInt;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+
 import com.example.weatherapp.R;
 
 public class ProgressButton {
@@ -15,6 +19,7 @@ public class ProgressButton {
     private ProgressBar mProgressBar;
     private ImageView mImageView;
     private ConstraintLayout mConstraintLayout;
+    private Context mContext;
 
     Animation fade_in;
 
@@ -26,6 +31,7 @@ public class ProgressButton {
         this.mTextView = view.findViewById(R.id.progress_btn_textView);
         this.mImageView = view.findViewById(R.id.progress_done_icon);
         this.mTextView.setText(context.getString(R.string.btn_Enter));
+        this.mContext = context;
     }
 
     public ProgressButton(Context context, View view, String buttonText) {
@@ -36,6 +42,7 @@ public class ProgressButton {
         this.mImageView = view.findViewById(R.id.progress_done_icon);
         this.mTextView = view.findViewById(R.id.progress_btn_textView);
         this.mTextView.setText(buttonText);
+        this.mContext = context;
     }
 
     public void buttonActivated() {
@@ -46,6 +53,7 @@ public class ProgressButton {
     }
 
     public void buttonFinished() {
+        this.mConstraintLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.mint_green));
         this.mProgressBar.setVisibility(View.INVISIBLE);
         this.mTextView.setVisibility(View.INVISIBLE);
         this.mImageView.setAnimation(fade_in);
@@ -53,6 +61,7 @@ public class ProgressButton {
     }
 
     public void buttonReset() {
+        this.mConstraintLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.mystic));
         this.mProgressBar.setVisibility(View.INVISIBLE);
         this.mTextView.setVisibility(View.VISIBLE);
         this.mImageView.setVisibility(View.INVISIBLE);
