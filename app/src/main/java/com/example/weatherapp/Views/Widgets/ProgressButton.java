@@ -4,12 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.animation.*;
 import android.widget.*;
-
-import androidx.annotation.ColorInt;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-
 import com.example.weatherapp.R;
 
 public class ProgressButton {
