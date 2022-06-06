@@ -20,12 +20,13 @@ public class ForecastActivity extends AppCompatActivity {
     private TextView mDetailedForecast;
     private ImageView mTonightImage;
     private ImageView mCurrentImage;
+    private ForecastViewModel mForecastViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
-        ForecastViewModel mForecastViewModel = new ViewModelProvider(this).get(ForecastViewModel.class);
+        mForecastViewModel = new ViewModelProvider(this).get(ForecastViewModel.class);
         mFullDays = mForecastViewModel.combineFullDaysInForecast(new Gson().fromJson(getIntent()
                 .getStringExtra("forecast"), Forecast.class));
 
