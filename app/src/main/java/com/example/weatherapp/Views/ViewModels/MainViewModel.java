@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.location.*;
-import android.util.*;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.*;
 import com.example.weatherapp.Models.*;
@@ -25,38 +24,13 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
     }
 
-    @SuppressLint("MissingPermission")
-    public Pair<Double, Double> getLocation() {
-        LocationManager locationManager;
-        Location gpsLocation;
-        Location networkLocation;
-
-        try {
-            locationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
-            gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-            if (gpsLocation != null) {
-                return new Pair<>(gpsLocation.getLatitude(), gpsLocation.getLongitude());
-            }
-            else if (networkLocation != null) {
-                return new Pair<>(networkLocation.getLatitude(), networkLocation.getLongitude());
-            }
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     public LiveData<Forecast> getAllDataWithGeocoder(Context context, String location) {
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
 
         BehaviorSubject<Geocoder> subject = BehaviorSubject.create();
         subject.onNext(geocoder);
         disposables.add(subject.hide()
-                .map(geo -> geocoder.getFromLocationName(location, 1))
+                .map(geo -> geo.getFromLocationName(location, 1))
                 .flatMap(response -> mWeatherRepository.executeGridDetailsApi(response.get(0).getLatitude(), response.get(0).getLongitude()))
                 .flatMap(response -> mWeatherRepository.executeForecastApi(response.getProperties().getGridId(),
                         response.getProperties().getGridX(), response.getProperties().getGridY()))
@@ -71,19 +45,31 @@ public class MainViewModel extends AndroidViewModel {
         return mForecastGeo;
     }
 
-    public LiveData<Forecast> getAllDataWithCoordinates(Double latitude, Double longitude) {
-        if(latitude != null && longitude != null) {
-            disposables.add(mWeatherRepository.executeGridDetailsApi(latitude, longitude)
-                    .flatMap(response -> mWeatherRepository.executeForecastApi(response.getProperties().getGridId(),
-                            response.getProperties().getGridX(), response.getProperties().getGridY()))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            mForecastCoor::setValue,
-                            throwable -> mForecastCoor.setValue(null)
-                    )
-            );
-        }
+    public LiveData<Forecast> getAllDataWithCoordinates() {
+        LocationManager locationManager = (LocationManager) getApplication().getSystemService(Context.LOCATION_SERVICE);
+        BehaviorSubject<LocationManager> subject = BehaviorSubject.create();
+        subject.onNext(locationManager);
+
+        disposables.add(subject.hide()
+                .map(loc -> {
+                    @SuppressLint("MissingPermission") Location gpsLocation = loc.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    @SuppressLint("MissingPermission") Location networkLocation = loc.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                    if(gpsLocation != null) { return gpsLocation; }
+                    if(networkLocation != null) { return networkLocation; }
+
+                    return null;
+                })
+                .flatMap(response -> mWeatherRepository.executeGridDetailsApi(response.getLatitude(), response.getLongitude()))
+                .flatMap(response -> mWeatherRepository.executeForecastApi(response.getProperties().getGridId(),
+                        response.getProperties().getGridX(), response.getProperties().getGridY()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        mForecastGeo::setValue,
+                        throwable -> mForecastGeo.setValue(null)
+                )
+        );
 
         return mForecastCoor;
     }

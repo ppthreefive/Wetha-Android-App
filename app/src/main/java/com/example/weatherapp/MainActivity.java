@@ -68,10 +68,11 @@ public class MainActivity extends AppCompatActivity {
             startForecastActivity(forecast);
         });
 
-        mMainViewModel.getAllDataWithCoordinates(null,null).observe(this, forecast -> {
+        mMainViewModel.getAllDataWithCoordinates().observe(this, forecast -> {
             if(forecast == null) {
                 if(mIsGps) {
-                    Snackbar.make(findViewById(android.R.id.content), R.string.error_not_supported, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content), R.string.error_gps, Snackbar.LENGTH_SHORT)
+                            .setAction(R.string.retry, view -> gpsBtnAction()).show();
                 }
                 resetButtons();
                 return;
@@ -125,15 +126,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        Pair<Double, Double> coordinates = mMainViewModel.getLocation();
-
-        if(coordinates == null) {
-            Snackbar.make(findViewById(android.R.id.content), R.string.error_gps, Snackbar.LENGTH_SHORT)
-                    .setAction(R.string.retry, view -> gpsBtnAction()).show();
-            return;
-        }
-
-        mMainViewModel.getAllDataWithCoordinates(coordinates.first, coordinates.second).getValue();
+        mMainViewModel.getAllDataWithCoordinates().getValue();
     }
 
     private void startForecastActivity(Forecast forecast) {
